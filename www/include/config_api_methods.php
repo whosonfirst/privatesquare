@@ -5,7 +5,7 @@
 	$GLOBALS['cfg']['api']['methods'] = array_merge(array(
 
 		"test.echo" => array(
-			"documented": 1,
+			"documented" => 1,
 			"enabled" => 0,
 			"library" => "api_test"
 		),

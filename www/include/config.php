@@ -19,7 +19,7 @@
 	#               on a machine not otherwise connected to the (public) Internets. See the section
 	#               on a 'here-be-dragons' locally hosted version in README.md
 
-	$GLOBALS['cfg']['environment'] = 'prod';
+	$GLOBALS['cfg']['environment'] = 'dev';
 
 	# Display a message in the page header (for all pages)
 

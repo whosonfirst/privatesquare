@@ -50,6 +50,8 @@
 	<script type="text/javascript" src="{$cfg.abs_root_url}javascript/privatesquare.foursquare.js"></script>
 	<script type="text/javascript" src="{$cfg.abs_root_url}javascript/privatesquare.stateofmind.js"></script>
 	<script type="text/javascript" src="{$cfg.abs_root_url}javascript/privatesquare.nypl.js"></script>
+
+	<script type="text/javascript" src="{$cfg.abs_root_url}javascript/flamework.api.js"></script>
 	<script type="text/javascript" src="{$cfg.abs_root_url}javascript/privatesquare.api.js"></script>
 {/if}
 
@@ -89,7 +91,7 @@
 	{$extra_head}
   </head>
 
-  <body data-abs-root-url="{$cfg.abs_root_url}" {if "api"|features_is_enabled}data-api-endpoint="{$cfg.abs_root_url}api/" {if "api_site_tokens|@features_is_enabled"}data-api-site-token="{$site_token|escape}"{/if}{/if} data-deferred-checkins="{if "deferred_checkins"|@features_is_enabled}enabled{else}disabled{/if}">
+  <body data-abs-root-url="{$cfg.abs_root_url}" {if "api"|features_is_enabled}data-api-endpoint="{$cfg.abs_root_url}api/" {if "api_site_tokens|@features_is_enabled"}data-api-access-token="{$site_token|escape}"{/if}{/if} data-deferred-checkins="{if "deferred_checkins"|@features_is_enabled}enabled{else}disabled{/if}">
 
   {if $cfg.display_message}
   <div class="alert alert-info"><p class="text-center">{$cfg.display_message_text|escape}</p></div>
