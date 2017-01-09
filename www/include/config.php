@@ -38,8 +38,8 @@
 	# You will need valid foursquare OAuth credentials
 	# See also: https://foursquare.com/oauth/register
 
-	$GLOBALS['cfg']['foursquare_oauth_key'] = '';
-	$GLOBALS['cfg']['foursquare_oauth_secret'] = '';
+	$GLOBALS['cfg']['foursquare_oauth_key'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['foursquare_oauth_secret'] = 'READ-FROM-SECRETS';
 	$GLOBALS['cfg']['foursquare_oauth_callback'] = 'auth/';
 
 	# See notes in lib_api_foursquare_venues
@@ -52,8 +52,8 @@
 	# See also: https://github.com/straup/reverse-geoplanet
 	# See also: http://www.flickr.com/services/apps/create/apply/
 
-	$GLOBALS['cfg']['reverse_geoplanet_remote_endpoint'] = '';
-	$GLOBALS['cfg']['flickr_api_key'] = '';
+	$GLOBALS['cfg']['reverse_geoplanet_remote_endpoint'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['flickr_api_key'] = 'READ-FROM-SECRETS';
 
 	# You will need to setup a MySQL database
 	# See also: https://github.com/straup/privatesquare/blob/master/schema
@@ -63,7 +63,7 @@
 		'host' => 'localhost',
 		'name' => 'privatesquare',
 		'user' => 'privatesquare',
-		'pass' => '',
+		'pass' => 'READ-FROM-SECRETS',
 		'auto_connect' => 0,
 	);
 
@@ -71,9 +71,9 @@
 	# that need to be encrypted.
 	# See also: https://github.com/straup/privatesquare/blob/master/bin/generate_secret.php
 
-	$GLOBALS['cfg']['crypto_cookie_secret'] = '';
-	$GLOBALS['cfg']['crypto_crumb_secret'] = '';
-	$GLOBALS['cfg']['crypto_password_secret'] = '';
+	$GLOBALS['cfg']['crypto_cookie_secret'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['crypto_crumb_secret'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['crypto_password_secret'] = 'READ-FROM-SECRETS';
 
 	# If you don't have memcache installed (or don't even know what that means)
 	# just leave this blank. Otherwise change the 'cache_remote_engine' to
@@ -96,12 +96,6 @@
 	$GLOBALS['cfg']['enable_feature_trips'] = 1;
 	$GLOBALS['cfg']['enable_feature_trips_calendars'] = 1;
 	$GLOBALS['cfg']['enable_feature_trips_calendars_include_past'] = 0;
-
-	# See also: 'Configuring fancy stuff – sending check-ins to Little Printer'
-	# in the README.md file for details
-
-	$GLOBALS['cfg']['enable_feature_bergcloud_users'] = 0;
-	$GLOBALS['cfg']['enable_feature_bergcloud_littleprinter'] = 0;
 
 	# See also: 'Configuring fancy stuff – Artisanal Integers'
 	# in the README.md file for details
@@ -250,4 +244,4 @@
 
 	$GLOBALS['cfg']['allow_prefetch'] = 0;
 
-?>
+	# the end
