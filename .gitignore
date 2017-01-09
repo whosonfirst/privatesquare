@@ -1,4 +1,5 @@
-www/include/config.php
+www/include/secrets*.php
 *~
 www/test.php
 .DS_Store
+certified
