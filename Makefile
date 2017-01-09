@@ -1,5 +1,24 @@
 all: prod templates php-ini
 
+mapzen: tangram mapzenjs refill crosshairs
+
+tangram:
+	curl -s -o www/javascript/tangram.js https://mapzen.com/tangram/tangram.debug.js
+	curl -s -o www/javascript/tangram.min.js https://mapzen.com/tangram/tangram.min.js
+
+mapzenjs:
+	curl -s -o www/css/mapzen.js.css https://mapzen.com/js/mapzen.css
+	curl -s -o www/javascript/mapzen.js https://mapzen.com/js/mapzen.min.js
+
+refill:
+	if test ! -d www/tangram/images; then mkdir -p www/tangram/images; fi
+	curl -s -o www/tangram/refill.yaml https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/refill-style.yaml
+	curl -s -o www/tangram/images/poi_icons_18@2x.png https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/images/poi_icons_18%402x.png
+	curl -s -o www/tangram/images/building-grid.gif https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/images/building-grid.gif
+
+crosshairs:
+	curl -s -o www/javascript/slippymaps.crosshairs.js https://raw.githubusercontent.com/whosonfirst/js-slippymap-crosshairs/master/src/slippymap.crosshairs.js
+
 js:
 	java -Xmx64m -jar lib/google-compiler/compiler-20100616.jar --js www/javascript/privatesquare.js --js www/javascript/privatesquare.venues.js --js www/javascript/privatesquare.foursquare.js --js www/javascript/privatesquare.nypl.js --js www/javascript/privatesquare.stateofmind.js --js www/javascript/privatesquare.api.js > www/javascript/privatesquare.core.min.js
 
@@ -7,12 +26,9 @@ js:
 
 	java -Xmx64m -jar lib/google-compiler/compiler-20100616.jar --js www/javascript/privatesquare.trips.js --js www/javascript/privatesquare.trips.calendars.js > www/javascript/privatesquare.trips.min.js
 
-	# Need to sort out warnings in both select2.js and (20140118/straup)	
-	# java -Xmx64m -jar lib/google-compiler/compiler-20100616.jar --js www/javascript/select2.js > www/javascript/select2.min.js
+	cat www/javascript/jquery-2.1.0.min.js www/javascript/bootstrap.min.js www/javascript/htmlspecialchars.min.js > www/javascript/privatesquare.dependencies.core.min.js
 
-	cat www/javascript/jquery-1.8.2.min.js www/javascript/bootstrap.min.js www/javascript/htmlspecialchars.min.js > www/javascript/privatesquare.dependencies.core.min.js
-
-	cat www/javascript/jquery-1.8.2.min.js www/javascript/htmapl-standalone.min.js www/javascript/store.min.js > www/javascript/privatesquare.dependencies.app.js
+	cat www/javascript/jquery-2.1.0.min.js www/javascript/htmapl-standalone.min.js www/javascript/store.min.js > www/javascript/privatesquare.dependencies.app.js
 
 	cat www/javascript/select2.js www/javascript/brick-calendar.min.js > www/javascript/privatesquare.dependencies.trips.min.js
 
@@ -24,22 +40,11 @@ css:
 
 prod: js css
 
-t: templates
-
 templates:
 	php -q ./bin/compile-templates.php
 
 secret:
 	php -q ./bin/generate_secret.php
-
-php-ini:
-	echo "; This file has been derived automagically from the www/.htaccess file" > www/php.ini
-	echo "; using the 'php-ini' command in www/Makefile on " `date` >> www/php.ini
-	echo "" >> www/php.ini
-	echo "; php_value settings" >> www/php.ini
-	/usr/bin/env grep php_value ./www/.htaccess | sed 's/^php_value \([a-z_]*\) \([a-z]*\)/\1 = \2/' >> www/php.ini
-	echo "; php_flag settings" >> www/php.ini
-	/usr/bin/env grep php_flag ./www/.htaccess | sed 's/^php_flag \([a-z_]*\) \([a-z]*\)/\1 = \2/' >> www/php.ini
 
 prune:
 	git gc --aggressive --prune
