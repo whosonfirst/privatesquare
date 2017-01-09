@@ -28,10 +28,12 @@
 
 	$GLOBALS['cfg']['autoload_libs'] = array(
 		'cache',
+		'geo_utils',
 		'urls',
 		'users',
 		'venues',
 		'venues_providers',
+		'venues_stateofmind',
 	);
 
 	# Valid venues providers
@@ -41,6 +43,7 @@
 		1 => 'foursquare',
 		2 => 'stateofmind',
 		3 => 'nypl',
+		5 => 'whosonfirst',
 	);
 
 	# You will need valid foursquare OAuth credentials
