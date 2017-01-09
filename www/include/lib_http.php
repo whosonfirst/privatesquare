@@ -1,4 +1,4 @@
-<?php
+<?
 
 	########################################################################
 
@@ -46,6 +46,29 @@
 
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+
+		if ($more['return_curl_handle']){
+			return $ch;
+		}
+
+		return _http_request($ch, $url, $more);
+	}
+
+	########################################################################
+
+	# uncertain what to think about $post_fields as different servers
+	# expect different things (aka params sent as GET/query args)...
+	# thanks, Roy (20120601/straup)
+
+	function http_delete($url, $post_fields, $headers=array(), $more=array()){
+
+		$ch = _http_curl_handle($url, $headers, $more);
+
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+
+		if ($post_fields){
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+		}
 
 		if ($more['return_curl_handle']){
 			return $ch;
@@ -112,6 +135,10 @@
 
 			else if ($method == 'POST'){
 				$ch = http_post($url, $body, $headers, $more);
+			}
+
+			else if ($method == 'DELETE'){
+				$ch = http_delete($url, $body, $headers, $more);
 			}
 
 			else if ($method == 'PUT'){
@@ -206,6 +233,14 @@
 			curl_setopt($ch, CURLOPT_MAXREDIRS, intval($more['follow_redirects']));
 		}
 
+		if ($more['user_agent']){
+			curl_setopt($ch, CURLOPT_USERAGENT, $more['user_agent']);
+		}
+
+		if ($more['ssl_ciphers']){
+			curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, $more['ssl_ciphers']);
+		}
+
 		return $ch;
 	}
 
@@ -217,6 +252,10 @@
 
 		$raw = curl_exec($ch);
 		$info = curl_getinfo($ch);
+
+		if ($err = curl_error($ch)){
+			$info['curl_error'] = $err;
+		}
 
 		$end = microtime_ms();
 
@@ -251,9 +290,15 @@
 
 		if (($status < 200) || ($status > 299)){
 
+			$error = "http_failed";
+			
+			if (isset($info['curl_error'])){
+				$error .= ": {$info['curl_error']}";
+			}
+
 			return array(
 				'ok'		=> 0,
-				'error'	=> 'http_failed',
+				'error'		=> $error,
 				'code'		=> $info['http_code'],
 				'method'	=> $method,
 				'url'		=> $info['url'],

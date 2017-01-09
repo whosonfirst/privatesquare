@@ -4,8 +4,6 @@
 	#
 	# A PHP input filtering library
 	#
-	# $Id$
-	#
 	# *article urls here*
 	#
 	# By Cal Henderson <cal@iamcal.com>
@@ -394,4 +392,3 @@
 	}
 
 	##############################################################################
-?>

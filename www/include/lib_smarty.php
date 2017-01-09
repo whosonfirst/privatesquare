@@ -1,7 +1,4 @@
 <?php
-	#
-	# $Id$
-	#
 
 	$GLOBALS['timings']['smarty_comp_count']	= 0;
 	$GLOBALS['timings']['smarty_comp_time']	= 0;
@@ -14,7 +11,7 @@
 	$GLOBALS['smarty']->template_dir = $GLOBALS['cfg']['smarty_template_dir'];
 	$GLOBALS['smarty']->compile_dir  = $GLOBALS['cfg']['smarty_compile_dir'];
 	$GLOBALS['smarty']->compile_check = $GLOBALS['cfg']['smarty_compile'];
-	$GLOBALS['smarty']->force_compile = 0; #$GLOBALS['cfg']['smarty_compile'];
+	$GLOBALS['smarty']->force_compile = $GLOBALS['cfg']['smarty_force_compile'];
 
 	$GLOBALS['smarty']->assign_by_ref('cfg', $GLOBALS['cfg']);
 
@@ -24,12 +21,8 @@
 
 		$GLOBALS['timings']['smarty_timings_out'] = microtime_ms();
 
-		echo "<table class=\"debugtimings\" border=\"1\" align=\"center\">\n";
-		echo "<tr>\n";
-		echo "<th>Item</th>";
-		echo "<th>Count</th>";
-		echo "<th>Time</th>";
-		echo "</tr>\n";
+		echo "<div class=\"admin-timings-wrapper\">\n";
+		echo "<table class=\"admin-timings\">\n";
 
 		# we add this one last so it goes at the bottom of the list
 		$GLOBALS['timing_keys']['smarty_comp'] = 'Templates Compiled';
@@ -37,7 +30,7 @@
 		foreach ($GLOBALS['timing_keys'] as $k => $v){
 			$c = intval($GLOBALS['timings']["{$k}_count"]);
 			$t = intval($GLOBALS['timings']["{$k}_time"]);
-			echo "<tr><td>$v</td><td>$c</td><td>$t ms</td></tr>\n";
+			echo "<tr><td>$v</td><td class=\"tar\">$c</td><td class=\"tar\">$t ms</td></tr>\n";
 		}
 
 		$map2 = array(
@@ -48,20 +41,13 @@
 		);
 
 		foreach ($map2 as $a){
-			echo "<tr><td colspan=\"2\">$a[0]</td><td>$a[1] ms</td></tr>\n";
+			echo "<tr><td colspan=\"2\">$a[0]</td><td class=\"tar\">$a[1] ms</td></tr>\n";
 		}
 
-		echo "</table>";
+		echo "</table>\n";
+		echo "</div>\n";
 	}
 
 	$GLOBALS['smarty']->register_function('timings', 'smarty_timings');
 
 	#######################################################################################
-
-	function smarty_dump($params) {
-		dumper($params);
-	}
-
-	$GLOBALS['smarty']->register_function('dump', 'smarty_dump');
-
-?>

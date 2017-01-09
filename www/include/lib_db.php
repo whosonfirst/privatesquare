@@ -1,7 +1,7 @@
 <?php
 
 	$GLOBALS['db_conns'] = array();
-
+	
 	$GLOBALS['timings']['db_conns_count']	= 0;
 	$GLOBALS['timings']['db_conns_time']	= 0;
 	$GLOBALS['timings']['db_queries_count']	= 0;
@@ -17,8 +17,8 @@
 
 	function db_init(){
 
-		if (!function_exists('mysql_connect')){
-			die("lib_db requires the mysql PHP extension\n");
+		if (!function_exists('mysqli_init')){
+			die("[lib_db] requires the mysql PHP extension\n");
 		}
 
 		#
@@ -40,35 +40,48 @@
 	# us to skip passing the cluster name. these are the only functions
 	# we should call from outside the library.
 	#
-	# In this example we have 2 cluster - one monolith called 'main' and
-	# one partitioned/sharded cluster called 'users' When making calls
-	# to the sharded cluster, we need to pass the shard number as the first
-	# argument.
-	#
+	# In this example we have (4) clusters:
+	# 1. A monolith called 'main' for anything that can't be sharded
+	# 2. A second monolith called 'accounts' for multiple Flamework applications
+	#    that need or want or need to share a centralized user accounts database
+	# 3. A partitioned/sharded cluster called 'users' When making calls to the
+	#    sharded cluster, we need to pass the shard number as the first
+	#    argument.
+	# 4. A partition called 'tickets' for generating unique IDs across multiple
+	#    cluster
 
-	function db_insert($tbl, $hash){			return _db_insert($tbl, $hash, 'main', null); }
-	function db_insert_users($k, $tbl, $hash){		return _db_insert($tbl, $hash, 'users', $k); }
 
-	function db_insert_bulk($tbl, $rows, $batch=100){	return _db_insert_bulk($tbl, $rows, $batch, 'main', null); }
-	function db_insert_bulk_users($tbl, $rows, $batch=100){	return _db_insert_bulk($tbl, $rows, $batch, 'users', $k); }
+	function db_insert($tbl, $hash){						return _db_insert($tbl, $hash, 'main', null); }
+	function db_insert_accounts($tbl, $hash){					return _db_insert($tbl, $hash, 'accounts', null); }
+	function db_insert_users($k, $tbl, $hash){					return _db_insert($tbl, $hash, 'users', $k); }
 
-	function db_insert_dupe($tbl, $hash, $hash2){		return _db_insert_dupe($tbl, $hash, $hash2, 'main', null); }
-	function db_insert_dupe_users($k, $tbl, $hash, $hash2){	return _db_insert_dupe($tbl, $hash, $hash2, 'users', $k); }
+	function db_insert_bulk($tbl, $rows, $batch=100){				return _db_insert_bulk($tbl, $rows, $batch, 'main', null); }
+	function db_insert_bulk_accounts($tbl, $rows, $batch=100){	       		return _db_insert_bulk($tbl, $rows, $batch, 'accounts', null); }
+	function db_insert_bulk_users($tbl, $rows, $batch=100){				return _db_insert_bulk($tbl, $rows, $batch, 'users', $k); }
 
-	function db_update($tbl, $hash, $where){		return _db_update($tbl, $hash, $where, 'main', null); }
-	function db_update_users($k, $tbl, $hash, $where){	return _db_update($tbl, $hash, $where, 'users', $k); }
+	function db_insert_dupe($tbl, $hash, $hash2, $more=array()){			return _db_insert_dupe($tbl, $hash, $hash2, 'main', null, $more); }
+	function db_insert_dupe_accounts($tbl, $hash, $hash2, $more=array()){		return _db_insert_dupe($tbl, $hash, $hash2, 'accounts', null, $more); }
+	function db_insert_dupe_users($k, $tbl, $hash, $hash2, $more=array()){		return _db_insert_dupe($tbl, $hash, $hash2, 'users', $k, $more); }
 
-	function db_fetch($sql){				return _db_fetch($sql, 'main', null); }
-	function db_fetch_slave($sql){				return _db_fetch_slave($sql, 'main_slaves'); }
-	function db_fetch_users($k, $sql){			return _db_fetch($sql, 'users', $k); }
+	function db_update($tbl, $hash, $where){					return _db_update($tbl, $hash, $where, 'main', null); }
+	function db_update_accounts($tbl, $hash, $where){				return _db_update($tbl, $hash, $where, 'accounts', null); }
+	function db_update_users($k, $tbl, $hash, $where){				return _db_update($tbl, $hash, $where, 'users', $k); }
 
-	function db_fetch_paginated($sql, $args){		return _db_fetch_paginated($sql, $args, 'main', null); }
-	function db_fetch_paginated_users($k, $sql, $args){	return _db_fetch_paginated($sql, $args, 'users', $k); }
+	function db_fetch($sql){							return _db_fetch($sql, 'main', null); }
+	function db_fetch_slave($sql){							return _db_fetch_slave($sql, 'main_slaves'); }
+	function db_fetch_accounts($sql){						return _db_fetch($sql, 'accounts', null); }
+	# function db_fetch_accounts_slave($sql){					return _db_fetch($sql, 'accounts_slave', null); }
+	function db_fetch_users($k, $sql){						return _db_fetch($sql, 'users', $k); }
 
-	function db_write($sql){				return _db_write($sql, 'main', null); }
-	function db_write_users($k, $sql){			return _db_write($sql, 'users', $k); }
+	function db_fetch_paginated($sql, $args){					return _db_fetch_paginated($sql, $args, 'main', null); }
+	function db_fetch_paginated_accounts($sql, $args){				return _db_fetch_paginated($sql, $args, 'accounts', null); }
+	function db_fetch_paginated_users($k, $sql, $args){				return _db_fetch_paginated($sql, $args, 'users', $k); }
 
-	function db_tickets_write($sql){			return _db_write($sql, 'tickets', null); }
+	function db_write($sql){							return _db_write($sql, 'main', null); }
+	function db_write_accounts($sql){						return _db_write($sql, 'accounts', null); }
+	function db_write_users($k, $sql){						return _db_write($sql, 'users', $k); }
+
+	function db_tickets_write($sql){						return _db_write($sql, 'tickets', null); }
 
 	#################################################################
 
@@ -97,16 +110,15 @@
 
 		$start = microtime_ms();
 
-		$GLOBALS['db_conns'][$cluster_key] = @mysql_connect($host, $user, $pass, 1);
+		$GLOBALS['db_conns'][$cluster_key] = @mysqli_connect($host, $user, $pass, $name);
 
 		if ($GLOBALS['db_conns'][$cluster_key]){
 
-			@mysql_select_db($name, $GLOBALS['db_conns'][$cluster_key]);
-			@mysql_query("SET character_set_results='utf8', character_set_client='utf8', character_set_connection='utf8', character_set_database='utf8', character_set_server='utf8'", $GLOBALS['db_conns'][$cluster_key]);
+			@mysqli_select_db($name, $GLOBALS['db_conns'][$cluster_key]);
+			@mysqli_query("SET character_set_results='utf8', character_set_client='utf8', character_set_connection='utf8', character_set_database='utf8', character_set_server='utf8'", $GLOBALS['db_conns'][$cluster_key]);
 		}
 
 		$end = microtime_ms();
-
 
 		#
 		# log
@@ -127,7 +139,7 @@
 		#
 
 		if ($GLOBALS['cfg']['db_profiling']){
-			@mysql_query("SET profiling = 1;", $GLOBALS['db_conns'][$cluster_key]);
+			@mysqli_query("SET profiling = 1;", $GLOBALS['db_conns'][$cluster_key]);
 		}
 	}
 
@@ -145,7 +157,7 @@
 		$use_sql = _db_comment_query($sql, $trace);
 
 		$start = microtime_ms();
-		$result = @mysql_query($use_sql, $GLOBALS['db_conns'][$cluster_key]);
+		$result = @mysqli_query($GLOBALS['db_conns'][$cluster_key], $use_sql);
 		$end = microtime_ms();
 
 		$GLOBALS['timings']['db_queries_count']++;
@@ -162,8 +174,8 @@
 
 		if ($GLOBALS['cfg']['db_profiling']){
 			$profile = array();
-			$p_result = @mysql_query("SHOW PROFILE ALL", $GLOBALS['db_conns'][$cluster_key]);
-			while ($p_row = mysql_fetch_array($p_result, MYSQL_ASSOC)){
+			$p_result = @mysqli_query("SHOW PROFILE ALL", $GLOBALS['db_conns'][$cluster_key]);
+			while ($p_row = mysqli_fetch_array($p_result, MYSQLI_ASSOC)){
 				$profile[] = $p_row;
 			}
 		}
@@ -174,8 +186,9 @@
 		#
 
 		if (!$result){
-			$error_msg	= mysql_error($GLOBALS['db_conns'][$cluster_key]);
-			$error_code	= mysql_errno($GLOBALS['db_conns'][$cluster_key]);
+
+			$error_msg	= mysqli_error($GLOBALS['db_conns'][$cluster_key]);
+			$error_code	= mysqli_errno($GLOBALS['db_conns'][$cluster_key]);
 
 			log_error("DB-$cluster_key: $error_code ".HtmlSpecialChars($error_msg));
 
@@ -213,11 +226,48 @@
 
 	#################################################################
 
-	function _db_insert_dupe($tbl, $hash, $hash2, $cluster, $shard){
+	function _db_insert_dupe($tbl, $hash, $hash2, $cluster, $shard, $more=array()){
 
 		$fields = array_keys($hash);
 
 		$bits = array();
+
+		# This bit ensures that the correct value gets stuck in to
+		# MySQL's 'insert_id' slot. This might be important if you
+		# are using a ticket server to generate an ID before you've
+		# tried to stick anything in the database. It is left as an
+		# exercise to the calling function to check/update the row's
+		# ID by reading $rsp['insert_id']. For example:
+		# 
+		# $widget = ...
+		# $insert == ...
+		# $dupe == ...
+		#		
+		# $more = array(
+		# 	'ensure_insert_id' => 'id'
+		# );
+		# 
+		# $rsp = db_insert_dupe("Widgets", $insert, $dupe, $more);
+		# 
+		# if ($rsp['ok']){
+		# 
+		# 	if ($id = $rsp['insert_id']){
+		# 		$widget['id'] = $id;
+		# 	}
+		# 
+		# 	$rsp['widget'] = $widget;
+		# }
+		# 
+		# (20140618/straup)
+		#
+		# See also:
+		# http://mikefenwick.com/blog/insert-into-database-or-return-id-of-duplicate-row-in-mysql/
+
+		if (isset($more['ensure_insert_id'])){
+			$id = $more['ensure_insert_id'];
+			$bits[] = "`{$id}`=LAST_INSERT_ID(`{$id}`)";
+		}
+
 		foreach(array_keys($hash2) as $k){
 			$bits[] = "`$k`='$hash2[$k]'";
 		}
@@ -318,7 +368,7 @@
 
 		$start = microtime_ms();
 		$count = 0;
-		while ($row = mysql_fetch_array($ret['result'], MYSQL_ASSOC)){
+		while ($row = mysqli_fetch_array($ret['result'], MYSQLI_ASSOC)){
 			$out['rows'][] = $row;
 			$count++;
 		}
@@ -494,8 +544,8 @@
 
 		return array(
 			'ok'		=> 1,
-			'affected_rows'	=> mysql_affected_rows($GLOBALS['db_conns'][$cluster_key]),
-			'insert_id'	=> mysql_insert_id($GLOBALS['db_conns'][$cluster_key]),
+			'affected_rows'	=> mysqli_affected_rows($GLOBALS['db_conns'][$cluster_key]),
+			'insert_id'	=> mysqli_insert_id($GLOBALS['db_conns'][$cluster_key]),
 		);
 	}
 
@@ -566,7 +616,7 @@
 		$cluster_key = _db_cluster_key($cluster, $shard);
 
 		if (is_resource($GLOBALS['db_conns'][$cluster_key])){
-			@mysql_close($GLOBALS['db_conns'][$cluster_key]);
+			@mysqli_close($GLOBALS['db_conns'][$cluster_key]);
 		}
 
 		unset($GLOBALS['db_conns'][$cluster_key]);
@@ -578,7 +628,7 @@
 		foreach ($GLOBALS['db_conns'] as $cluster_key => $conn){
 
 			if (is_resource($conn)){
-				@mysql_close($conn);
+				@mysqli_close($conn);
 			}
 
 			unset($GLOBALS['db_conns'][$cluster_key]);
@@ -601,7 +651,7 @@
 		if (is_resource($GLOBALS['db_conns'][$cluster_key])){
 
 			$start = microtime_ms();
-			$ret = @mysql_ping($GLOBALS['db_conns'][$cluster_key]);
+			$ret = @mysqli_ping($GLOBALS['db_conns'][$cluster_key]);
 			$end = microtime_ms();
 
 			log_notice('db', "DB-$cluster_key: Ping", $end-$start);

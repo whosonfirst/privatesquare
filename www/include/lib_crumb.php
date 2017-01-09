@@ -1,9 +1,5 @@
 <?php
 
-	#
-	# $Id$
-	#
-
 	#################################################################
 
 	function crumb_generate($key, $target=''){
@@ -66,6 +62,11 @@
 		$hash_test = str_split($hash_test);
 
 		$len_hash = count($hash);
+		$len_test = count($hash_test);
+
+		if ($len_hash != $len_test){
+			return 0;
+		}
 
 		for ($i=0; $i < $len_hash; $i++){
 
@@ -122,4 +123,3 @@
 	}
 
 	#################################################################
-?>

@@ -1,13 +1,5 @@
 <?php
 
-	#
-	# $Id$
-	#
-
-	#################################################################
-
-	$GLOBALS['users_local_cache'] = array();
-
 	#################################################################
 
 	#
@@ -29,6 +21,7 @@
 
 		$user['cluster_id'] = users_assign_cluster_id();
 
+
 		#
 		# now create the escaped version
 		#
@@ -38,21 +31,23 @@
 			$hash[$k] = AddSlashes($v);
 		}
 
-		$rsp = db_insert('users', $hash);
+		$ret = db_insert_accounts('users', $hash);
 
-		if (!$rsp['ok']){
-			return null;
-		}
+		if (!$ret['ok']) return $ret;
 
 
 		#
 		# cache the unescaped version
 		#
 
-		$user['id'] = $rsp['insert_id'];
+		$user['id'] = $ret['insert_id'];
 
-		$GLOBALS['user_local_cache'][$user['id']] = $user;
-		return $user;
+		cache_set("USER-{$user['id']}", $user);
+
+		return array(
+			'ok'	=> 1,
+			'user'	=> $user,
+		);
 	}
 
 	#################################################################
@@ -64,18 +59,21 @@
 
 	function users_update_user(&$user, $update){
 
+		$hash = array();
+
 		foreach ($update as $k => $v){
-			$update[$k] = AddSlashes($v);
+			$hash[$k] = AddSlashes($v);
 		}
 
-		$rsp = db_update('users', $update, "id=$user[id]");
+		$ret = db_update_accounts('users', $hash, "id={$user['id']}");
 
-		if (!$rsp['ok']){
-			return null;
-		}
+		if (!$ret['ok']) return $ret;
 
-		unset($GLOBALS['user_local_cache'][$user['id']]);
-		return 1;
+		cache_unset("USER-{$user['id']}");
+
+		return array(
+			'ok' => 1,
+		);
 	}
 
 	#################################################################
@@ -112,9 +110,12 @@
 
 	function users_get_by_id($id){
 
-		$user = db_single(db_fetch("SELECT * FROM users WHERE id=".intval($id)));
+		$sql = "SELECT * FROM users WHERE id=" . intval($id);
 
-		$GLOBALS['user_local_cache'][$id] = $user;
+		$rsp = db_fetch_accounts($sql);
+		$user = db_single($rsp);
+
+		cache_set("USER-{$user['id']}", $user);
 
 		return $user;
 	}
@@ -124,8 +125,10 @@
 	function users_get_by_email($email){
 
 		$enc_email = AddSlashes($email);
+		$sql = "SELECT * FROM users WHERE email='{$enc_email}'";
 
-		return db_single(db_fetch("SELECT * FROM users WHERE email='{$enc_email}'"));
+		$rsp = db_fetch_accounts($sql);
+		return db_single($rsp);
 	}
 
 	#################################################################
@@ -142,7 +145,7 @@
 			return null;
 		}
 
-		if ($user['password'] != passwords_encrypt_password($password)){
+		if (! passwords_validate_password_for_user($password, $user)){
 			return null;
 		}
 
@@ -154,8 +157,10 @@
 	function users_is_email_taken($email){
 
 		$enc_email = AddSlashes($email);
+		$sql = "SELECT id FROM users WHERE email='{$enc_email}' AND deleted=0";
 
-		$row = db_single(db_fetch("SELECT id FROM users WHERE email='{$enc_email}' AND deleted=0"));
+		$rsp = db_fetch_accounts($sql);
+		$row = db_single($rsp);
 
 		return $row['id'] ? 1 : 0;
 	}
@@ -166,7 +171,10 @@
 
 		$enc_username = AddSlashes($username);
 
-		$row = db_single(db_fetch("SELECT id FROM users WHERE username='{$enc_username}' AND deleted=0"));
+		$sql = "SELECT id FROM users WHERE username='{$enc_username}' AND deleted=0";
+		$rsp = db_fetch_accounts($sql);
+
+		$row = db_single($rsp);
 		return $row['id'] ? 1 : 0;
 	}
 
@@ -176,7 +184,10 @@
 
 		$enc_code = AddSlashes($code);
 
-		$row = db_single(db_fetch("SELECT * FROM users_password_reset WHERE reset_code='{$enc_code}'"));
+		$sql = "SELECT * FROM users_password_reset WHERE reset_code='{$enc_code}'";
+
+		$rsp = db_fetch_accounts($sql);
+		$row = db_single($rsp);
 
 		if (!$row){
 			return null;
@@ -189,7 +200,10 @@
 
 	function users_purge_password_reset_codes(&$user){
 
-		$rsp = db_write("DELETE FROM users_password_reset WHERE user_id=$user[id]");
+		$enc_user = intval($user[id]);
+		$sql = "DELETE FROM users_password_reset WHERE user_id=$enc_user";
+
+		$rsp = db_write_accounts($sql);
 
 		return $rsp['ok'];
 	}
@@ -226,14 +240,17 @@
 			$code = random_string(32);
 			$enc_code = AddSlashes($code);
 
-			if (db_single(db_fetch("SELECT 1 FROM users_password_reset WHERE reset_code='{$enc_code}'"))){
+			$sql = "SELECT 1 FROM users_password_reset WHERE reset_code='{$enc_code}'";
+			$rsp = db_fetch_accounts($sql);
+
+			if (db_single($rsp)){
 				$code = '';
 			}
 
 			break;
 		}
 
-		$rsp = db_insert('users_password_reset', array(
+		$rsp = db_insert_accounts('users_password_reset', array(
 			'user_id'	=> $user['id'],
 			'reset_code'	=> $enc_code,
 			'created'	=> time(),
@@ -260,4 +277,3 @@
 	}
 
 	#################################################################
-?>

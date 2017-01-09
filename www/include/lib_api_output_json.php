@@ -1,5 +1,7 @@
 <?php
 
+	loadlib("http_codes");
+
 	#################################################################
 
 	function api_output_ok($rsp=array(), $more=array()){
@@ -10,12 +12,14 @@
 
 	function api_output_error($code=999, $msg='', $more=array()){
 
+		$more['is_error'] = 1;
+
 		$out = array('error' => array(
 			'code' => $code,
-			'error' => $msg,
+			'message' => $msg,
 		));
 
-		$more['is_error'] = 1;
+		api_log($out);
 
 		api_output_send($out, $more);
 	}
@@ -26,25 +30,22 @@
 
 		$rsp['stat'] = (isset($more['is_error'])) ? 'error' : 'ok';
 
-		$json = json_encode($rsp);
+		api_log(array('stat' => $rsp['stat']), 'write');
 
-		utf8_headers();
+		api_output_utils_start_headers($rsp, $more);
 
-		# TO DO: these don't always appear to be being set correctly
+		if (features_is_enabled("api_cors")){
 
-		if (isset($more['is_error'])){
- 			header("HTTP 500 Server Error");
- 			header("Status: 500 Server Error");
+			if ($origin = $GLOBALS['cfg']['api_cors_allow_origin']){
+				header("Access-Control-Allow-Origin: " . htmlspecialchars($origin));
+			}
 		}
 
-		if (isset($more['cors_allow'])){
-			header("Access-Control-Allow-Origin: " . htmlspecialchars($more['cors_allow']));
-		}
-
-		if (! isset($more['inline'])){
+		if (! request_isset("inline")){
 			header("Content-Type: text/json");
 		}
 
+		$json = json_encode($rsp);
 		header("Content-Length: " . strlen($json));
 
 		echo $json;
@@ -53,4 +54,4 @@
 
 	#################################################################
 
-?>
+	# the end
