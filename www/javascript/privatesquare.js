@@ -138,7 +138,7 @@ function privatesquare_checkin(args, on_success){
 
 	var method = 'privatesquare.venues.checkin';
 
-	privatesquare_api_call(method, args, on_success, on_error);
+	privatesquare.api.call(method, args, on_success, on_error);
 }
 
 // currently assumed to be foursquare since nothing else has search
@@ -383,9 +383,28 @@ function privatesquare_show_map_bbox(bbox,venues){
 
 function privatesquare_htmapl(map){
 
+    /*
+    var el = document.getElementById("map");
+
+    var center = el.getAttribute("data-center");
+    var zoom = el.getAttribute("data-zoom");
+
+    center = center.split(",");
+
+    var lat = parseFloat(center[0]);
+    var lon = parseFloat(center[1]);
+
+    var map = L.Mapzen.map('map', {
+        center: [ lat, lon ],
+        zoom: 13,
+        scene: L.Mapzen.BasemapStyles.RefillNoLabels
+    });
+
+    */
+
 	if (! map){
 		map = $(".map");
-	}
+	}    	
 
 	try {
 		map.htmapl();
