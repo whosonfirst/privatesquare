@@ -26,6 +26,13 @@
 	$GLOBALS['cfg']['display_message'] = 0;
 	$GLOBALS['cfg']['display_message_text'] = 'This is the text that will appear in the message header.';
 
+	$GLOBALS['cfg']['autoload_libs'] = array(
+		'cache',
+		'urls',
+		'venues',
+		'venues_providers',
+	);
+
 	# Valid venues providers
 
 	$GLOBALS['cfg']['privatesquare_venues_providers'] = array(
@@ -60,6 +67,14 @@
 	# See also: https://github.com/straup/flamework-tools/blob/master/bin/setup-db.sh
 
 	$GLOBALS['cfg']['db_main'] = array(
+		'host' => 'localhost',
+		'name' => 'privatesquare',
+		'user' => 'privatesquare',
+		'pass' => 'READ-FROM-SECRETS',
+		'auto_connect' => 0,
+	);
+
+	$GLOBALS['cfg']['db_accounts'] = array(
 		'host' => 'localhost',
 		'name' => 'privatesquare',
 		'user' => 'privatesquare',

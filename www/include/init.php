@@ -420,6 +420,7 @@
 	$start = microtime_ms();
 
 	loadlib('features');
+	loadlib('users');
 	loadlib('passwords');
 	loadlib('auth');
 	loadlib('log');		# logging comes first, so that other modules can log during startup
