@@ -67,11 +67,11 @@ RewriteRule	^apple-touch-icon.png		images/apple-touch-icon.png	[L]
 RewriteRule    ^signout/?$		signout.php		[L]
 RewriteRule    ^checkcookie/?$		checkcookie.php	[L]
 
-RewriteRule  ^auth/?$			auth_callback_foursquare_oauth.php?%{QUERY_STRING}	[L]
-RewriteRule  ^signin/?$			signin_foursquare_oauth.php?%{QUERY_STRING}		[L]
+# RewriteRule  ^auth/?$			auth_callback_foursquare_oauth.php?%{QUERY_STRING}	[L]
+# RewriteRule  ^signin/?$		signin_foursquare_oauth.php?%{QUERY_STRING}		[L]
 
-RewriteRule  ^signup/email/?$		signup_email.php?%{QUERY_STRING}		[L]
-RewriteRule  ^signin/email/?$		signin_email.php?%{QUERY_STRING}		[L]
+RewriteRule  ^signup/?$			signup_email.php?%{QUERY_STRING}		[L]
+RewriteRule  ^signin/?$			signin_email.php?%{QUERY_STRING}		[L]
 
 # Password retrieval stuff
 

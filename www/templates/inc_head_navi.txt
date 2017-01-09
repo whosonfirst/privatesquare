@@ -84,7 +84,7 @@
 		</li>
 
 		{else}
-		<li id="signin"><a href="{$cfg.abs_root_url}signin/">sign in w/ 4sq</a></li>
+		<li id="signin"><a href="{$cfg.abs_root_url}signin/">sign in</a></li>
 		{/if}
 		{/if}
 
