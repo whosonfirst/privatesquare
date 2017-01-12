@@ -81,10 +81,9 @@ RewriteRule  ^signin/?$			signin_email.php?%{QUERY_STRING}		[L]
 # Account stuff
 
 RewriteRule  ^account/?$		account.php		[L]
-# RewriteRule  ^account/password/?$	account_password.php	[L]
-# RewriteRule  ^account/delete/?$		account_delete.php	[L]
+RewriteRule  ^account/password/?$	account_password.php	[L]
+RewriteRule  ^account/delete/?$		account_delete.php	[L]
 
-RewriteRule  ^account/bergcloud/?$		account_bergcloud.php		[L]
 RewriteRule  ^account/foursquare/sync/?$	account_foursquare_sync.php?%{QUERY_STRING}	[L]
 
 # API

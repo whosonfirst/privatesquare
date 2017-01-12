@@ -310,6 +310,7 @@ function privatesquare_show_map(lat, lon, label){
 
 	// just pass these are args to the htmapl function call?
 
+	map.attr("id", "map");
 	map.attr("class", "map");
 	map.attr("data-zoom", 14);
 	map.attr("data-center", latlon);
@@ -324,7 +325,7 @@ function privatesquare_show_map(lat, lon, label){
 	mrk.attr("data-location", latlon)
 	mrk.html(htmlspecialchars(label));
 
-	map.html(mrk);
+    	map.html(mrk);
 	wrapper.html(map)
 
 	wrapper.show();
@@ -383,9 +384,8 @@ function privatesquare_show_map_bbox(bbox,venues){
 
 function privatesquare_htmapl(map){
 
-    /*
     var el = document.getElementById("map");
-
+    
     var center = el.getAttribute("data-center");
     var zoom = el.getAttribute("data-zoom");
 
@@ -400,8 +400,34 @@ function privatesquare_htmapl(map){
         scene: L.Mapzen.BasemapStyles.RefillNoLabels
     });
 
-    */
+    var markers = el.getElementsByClassName("marker");
+    var count = markers.length;
 
+    for (var i = 0; i < count; i++){
+
+	var m = markers[i];
+
+	var loc = m.getAttribute("data-location");
+	loc = loc.split(",");
+
+	var lat = parseFloat(loc[0]);
+	var lon = parseFloat(loc[1]);
+
+	var label = m.innerText;
+
+	var point = {
+	    'type': 'Feature',
+	    'geometry': { 'type': 'Point', 'coordinates': [ lon, lat ] },
+	    'properties': { 'lflt:label_text': label }
+	};
+
+	var style = mapzen.whosonfirst.leaflet.styles.search_centroid();
+	var handler = mapzen.whosonfirst.leaflet.handlers.point();
+
+	mapzen.whosonfirst.leaflet.draw_point(map, point, style, handler);
+    }
+
+    /*
 	if (! map){
 		map = $(".map");
 	}    	
@@ -413,6 +439,7 @@ function privatesquare_htmapl(map){
 	catch (e){
 		map.html('<div class="map-error alert alert-warning">hrmph...failed to load map: ' + e + '</div>');
 	}
+    */
 }
 
 function privatesquare_hide_map(){

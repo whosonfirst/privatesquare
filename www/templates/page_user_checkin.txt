@@ -14,7 +14,7 @@
 {/if}
 
 <div class="row">
-<div class="checkin" id="map">
+<div class="checkin">
 	<div class="map" data-zoom="14" data-center="{$checkin.latitude|escape},{$checkin.longitude|escape}" data-hash="false" data-interactive="false" data-provider="toner">
 		<div class="marker marker-history" data-location="{$checkin.latitude|escape},{$checkin.longitude|escape}"><span class="marker-history-text">{$checkin.venue.name|escape}</span></div>
 	</div>

@@ -16,6 +16,12 @@ refill:
 	curl -s -o www/tangram/images/poi_icons_18@2x.png https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/images/poi_icons_18%402x.png
 	curl -s -o www/tangram/images/building-grid.gif https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/images/building-grid.gif
 
+leaflet:
+	curl -s -o www/javascript/leaflet.label.min.js https://raw.githubusercontent.com/Leaflet/Leaflet.label/master/dist/leaflet.label.js
+	curl -s -o www/javascript/mapzen.whosonfirst.leaflet.js https://raw.githubusercontent.com/whosonfirst/js-mapzen-whosonfirst/master/src/mapzen.whosonfirst.leaflet.js
+	curl -s -o www/javascript/mapzen.whosonfirst.leaflet.styles.js https://raw.githubusercontent.com/whosonfirst/js-mapzen-whosonfirst/master/src/mapzen.whosonfirst.leaflet.styles.js
+	curl -s -o www/javascript/mapzen.whosonfirst.leaflet.handlers.js https://raw.githubusercontent.com/whosonfirst/js-mapzen-whosonfirst/master/src/mapzen.whosonfirst.leaflet.handlers.js
+
 crosshairs:
 	curl -s -o www/javascript/slippymaps.crosshairs.js https://raw.githubusercontent.com/whosonfirst/js-slippymap-crosshairs/master/src/slippymap.crosshairs.js
 
