@@ -1,5 +1,7 @@
 <?php
 
+	# DEPRECATED
+
 	loadlib("geohash");
 	loadlib("geo_flickr");
 

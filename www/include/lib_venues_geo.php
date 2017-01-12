@@ -1,7 +1,7 @@
 <?php
 
 
-	loadlib("reverse_geoplanet");
+	loadlib("reverse_geoplanet");	# DEPRECATED
 
 	#################################################################
 
@@ -18,6 +18,8 @@
 	#################################################################
 
 	function venues_geo_append_hierarchy($lat, $lon, &$thing){
+
+		# FIX ME... USE WHOSONFIRST GET BY LAT LON
 
 		$geo_rsp = reverse_geoplanet($lat, $lon, $GLOBALS['cfg']['reverse_geoplanet_remote_endpoint']);
 

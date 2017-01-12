@@ -1,8 +1,12 @@
 <?php
 
 	loadlib("datetime_when");
-	loadlib("reverse_geoplanet");
 	loadlib("privatesquare_utils");
+
+	loadlib("whosonfirst");
+
+	# DEPRECATED 
+	loadlib("reverse_geoplanet");
 
  	#################################################################
 
@@ -305,6 +309,8 @@
 
 			$count = $tmp[$woeid];
 
+			# FIX ME: GET BY WHOSONFIRST ID
+
 			$row = reverse_geoplanet_get_by_woeid($woeid, 'locality');
 
 			# what if ! $row? should never happen but...
@@ -592,6 +598,9 @@
 		# (20120301/straup)
 
 		if ((isset($more['inflate_locality'])) && ($woeid = $row['locality'])){
+
+			# FIX ME: GET BY WHOSONFIRST ID
+
 			$loc = reverse_geoplanet_get_by_woeid($woeid, 'locality');
 		 	$row['locality'] = $loc;
 		}

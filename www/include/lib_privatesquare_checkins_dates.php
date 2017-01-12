@@ -3,7 +3,7 @@
 	# See also: http://php.net/manual/en/function.date.php
 
 	loadlib("privatesquare_checkins_timezones");
-	loadlib("reverse_geoplanet");
+	loadlib("reverse_geoplanet");	# DEPRECATED
 
 	#################################################################
 
@@ -34,6 +34,9 @@
 		}
 
 		if (! is_array($locality)){
+
+			# FIX ME: GET BY WHOSONFIRST ID
+
 			$locality = reverse_geoplanet_get_by_woeid($locality, 'locality');
 		}
 
