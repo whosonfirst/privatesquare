@@ -29,9 +29,11 @@
 	$GLOBALS['cfg']['autoload_libs'] = array(
 		'cache',
 		'geo_utils',
+		'privatesquare_utils',
 		'urls',
 		'users',
 		'venues',
+		'venues_geo',
 		'venues_providers',
 		'venues_stateofmind',
 	);

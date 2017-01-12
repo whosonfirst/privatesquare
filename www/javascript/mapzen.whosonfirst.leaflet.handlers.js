@@ -19,7 +19,7 @@ mapzen.whosonfirst.leaflet.handlers = (function(){
 					var label = props['lflt:label_text'];
 					
 					if (label){
-						m.bindLabel(label, { noHide: false });
+					    m.bindLabel(label, { noHide: false });
 					}
 				}
 				
